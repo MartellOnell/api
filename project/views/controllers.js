@@ -1,11 +1,31 @@
 import express from "express"
 import { User } from "../database/models.js"
+import { getToken, verifyToken } from "./jwt-sign-decode.js"
+import { sendMailMsg } from "../mail/mail-client.js"
 
 export const hello = async (req, res) => {
     res.json("hello")
 }
 
-export const createUser = async (req, res) => {
+export const finalMailRegister = async (req, res) => {
+    const data = req.body
+    const token = data.verToken
+
+    try {
+        const decToken = verifyToken(token)
+        const newUser = User.create(decToken)
+        const message = {
+            msg: "user has succesfully created",
+            userId: newUser.id,
+        }
+        res.json(message)
+    } catch (err) {
+        console.log(err)
+        res.json("oops, an occured error while creating user")
+    }
+}
+
+export const sendMailToRegister = async (req, res) => {
     const data = req.body
     const cleanData = {
         username: data.username,
@@ -18,10 +38,19 @@ export const createUser = async (req, res) => {
     const userEqUsername = await User.findAll({where: {username: data.username}})
     if (userEqEmail.length == 0 && userEqUsername.length == 0) {
         try {
-            const newUser = await User.create(cleanData)
-            res.json("user has succesfully created")
+            const newToken = getToken(cleanData)
+            const message = {
+                msg: "mail has succesfully sended"
+            }
+            const mailMsg = {
+                to: cleanData.email,
+                subject: "email verify",
+                text: `click to this link to complete register <link on frontend>/${newToken}`
+            }
+            await sendMailMsg(...mailMsg)
+            res.json(message)
         } catch {
-            res.status(500).json("oops an occured error while creating user")
+            res.status(500).json("oops, an occured error while sending email")
         }
     } else {
         res.status(400).json("user already exists")
