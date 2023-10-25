@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=rooter
+      - POSTGRES_DB=mainer
+      - POSTGRES_PASSWORD=nddr6444
+    volumes:
+      - pgdata2:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d nddb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: on-failure
+
+  backend:
+    container_name: backend
+    build: ./project
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      
+volumes:
+  pgdata2: {}
