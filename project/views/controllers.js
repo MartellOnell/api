@@ -8,20 +8,25 @@ export const hello = async (req, res) => {
 }
 
 export const finalMailRegister = async (req, res) => {
-    const data = req.body
-    const token = data.verToken
-
-    try {
-        const decToken = verifyToken(token)
-        const newUser = User.create(decToken)
+    const token = req.body.token
+    if (!token) {
         const message = {
-            msg: "user has succesfully created",
-            userId: newUser.id,
+            msg: "wrong code"
         }
-        res.json(message)
-    } catch (err) {
-        console.log(err)
-        res.json("oops, an occured error while creating user")
+        res.status(400).json(message)
+    } else {
+        try {
+            const decToken = verifyToken(token)
+            const newUser = User.create(decToken)
+            const message = {
+                msg: "user has succesfully created",
+                userId: newUser.id,
+            }
+            res.json(message)
+        } catch (err) {
+            console.log(err)
+            res.status(500).json("oops, an occured error while creating user")
+        }
     }
 }
 
@@ -45,7 +50,7 @@ export const sendMailToRegister = async (req, res) => {
             const mailMsg = {
                 to: cleanData.email,
                 subject: "email verify",
-                text: `click to this link to complete register <link on frontend>/${newToken}`
+                text: `click to this link to complete register http://localhost:8000/api/final_register/${newToken}`
             }
             await sendMailMsg(mailMsg.to, mailMsg.subject, mailMsg.text)
             res.json(message)

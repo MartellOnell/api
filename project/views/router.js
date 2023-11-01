@@ -14,3 +14,12 @@ router.post("/api/register_send_mail", async (req, res) => {
 router.post("/api/final_register", async (req, res) => {
     await finalMailRegister(req, res)
 })
+
+router.get("/api/test/:token", async (req, res) => {
+    const getToken = req.params.token
+    if (token == getToken) {
+        res.json('url wasnt cutting url route')
+    } else {
+        res.json('url token was cutted')
+    }
+})
