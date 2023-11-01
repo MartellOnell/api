@@ -30,7 +30,7 @@ export const sendMailToRegister = async (req, res) => {
     const cleanData = {
         username: data.username,
         email: data.email,
-        password: data.email,
+        password: data.password,
         phoneNumber: data.phoneNumber
     }
 
@@ -47,9 +47,10 @@ export const sendMailToRegister = async (req, res) => {
                 subject: "email verify",
                 text: `click to this link to complete register <link on frontend>/${newToken}`
             }
-            await sendMailMsg(...mailMsg)
+            await sendMailMsg(mailMsg.to, mailMsg.subject, mailMsg.text)
             res.json(message)
-        } catch {
+        } catch (err) {
+            console.log(err)
             res.status(500).json("oops, an occured error while sending email")
         }
     } else {

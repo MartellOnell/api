@@ -9,12 +9,12 @@ const port = process.env.NODE_PORT
 console.log(process.env)
 let app = express()
 
-// try {
-//     await sequelize.authenticate()
-//     await sequelize.sync()
-// } catch(e) {
-//     console.log(e)
-// }
+try {
+    await sequelize.authenticate()
+    await sequelize.sync()
+} catch(e) {
+    console.log(e)
+}
 
 app.use(cors({
     origin: '*',

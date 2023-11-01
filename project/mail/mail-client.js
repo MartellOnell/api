@@ -1,18 +1,18 @@
 import nodemailer from "nodemailer"
 
 const transporter = nodemailer.createTransport({
-    host: "",
-    port: 0,
+    host: "smtp.yandex.ru",
+    port: 465,
     sequre: true,
     auth: {
-        user: "user@mail.com",
-        pass: "pass"
+        user: "car.pet.pydj@yandex.ru",
+        pass: "makstr78"
     }
 })
 
 export const sendMailMsg = async (to, subject, text) => {
     await transporter.sendMail({
-        from: "user@mail.com",
+        from: "car.pet.pydj@yandex.ru",
         to: to,
         subject: subject,
         text: text,
