@@ -25,8 +25,13 @@ const decryptToken = encryptToken => {
     return decData
 }
 
-export const getToken = data => {
-    const token = jwt.sign(data, jwtSecKey, { expiresIn: '15d' })
+export const getRegisterToken = data => {
+    const token = jwt.sign(data, jwtSecKey, { expiresIn: '1d' })
+    return encryptToken(token)
+}
+
+export const getAuthToken = data => {
+    const token = jwt.sign(data, jwtSecKey, {expiresIn: '15d' })
     return encryptToken(token)
 }
 

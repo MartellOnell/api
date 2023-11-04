@@ -2,6 +2,11 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "./db.js";
 
 export const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     username: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -19,10 +24,19 @@ export const User = sequelize.define('User', {
     phoneNumber: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    permissions: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 })
 
-export const product = sequelize.define('Product', {
+export const Product = sequelize.define('Product', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false

@@ -1,14 +1,18 @@
 import express from "express"
-import { hello, sendMailToRegister, finalMailRegister } from "./controllers.js"
+import { sendMailToRegister, finalMailRegister, login } from "./userControllers.js"
 
 export const router = express.Router()
 
-router.get("/", async (req, res) => {
-    await hello(req, res)
+router.post("/api/login", async (req, res) => {
+    await login(req, res)
 })
 
 router.post("/api/register_send_mail", async (req, res) => {
     await sendMailToRegister(req, res)
+})
+
+router.post("/api/register", async (req, res) => {
+    await login(req, res)
 })
 
 router.post("/api/final_register", async (req, res) => {

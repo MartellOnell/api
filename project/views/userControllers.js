@@ -1,10 +1,42 @@
-import express from "express"
 import { User } from "../database/models.js"
-import { getToken, verifyToken } from "./jwt-sign-decode.js"
+import { getRegisterToken, verifyToken, getAuthToken } from "./jwt-sign-decode.js"
 import { sendMailMsg } from "../mail/mail-client.js"
 
-export const hello = async (req, res) => {
-    res.json("hello")
+export const login = async (req, res) => {
+    const data = req.body
+
+    data.username = !data.username ? '' : data.username
+    data.password = !data.password ? '' : data.password
+
+    let userUsernameExist = ''
+    let userEmailExist = ''
+    try {
+        userUsernameExist = await User.findAll({where: {username: data.username}})
+        userEmailExist = await User.findAll({where: {email: data.username}})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({msg: ""})
+    }
+
+    if (userEmailExist.length !== 0 || userUsernameExist.length !== 0) {
+        const user = userEmailExist.length !== 0 
+                    ? userEmailExist[0]
+                    : userUsernameExist[0]
+        if (user.password === data.password) {
+            const authToken = getAuthToken({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                permissions: user.permissions
+            })
+            const message = {
+                msg: "user successfully sign in",
+                token: authToken,
+            }
+            return res.json(message)
+        }
+    }
+    return res.status(404).json("wrong data")
 }
 
 export const finalMailRegister = async (req, res) => {
@@ -25,9 +57,19 @@ export const finalMailRegister = async (req, res) => {
                 console.log(userEqEmail, userEqUsername)
                 if (userEqEmail.length == 0 && userEqUsername.length == 0) {
                     console.log('-------user succ reg')
-                    const newUser = User.create(decToken)
+                    const newUser = await User.create({
+                        ...decToken,
+                        permissions: 'default',
+                    })
+                    const authToken = getAuthToken({
+                        id: newUser.id,
+                        usename: newUser.usename,
+                        email: newUser.email,
+                        permissions: newUser.permissions
+                    })
                     const message = {
                         msg: "user has succesfully created",
+                        token: authToken,
                         userId: newUser.id,
                     }
                     res.json(message)
@@ -56,7 +98,7 @@ export const sendMailToRegister = async (req, res) => {
     console.log(userEqUsername)
     if (userEqEmail.length == 0 && userEqUsername.length == 0) {
         try {
-            const newToken = getToken(cleanData)
+            const newToken = getRegisterToken(cleanData)
             const message = {
                 msg: "mail has succesfully sended"
             }
