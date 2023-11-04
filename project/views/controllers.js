@@ -17,12 +17,24 @@ export const finalMailRegister = async (req, res) => {
     } else {
         try {
             const decToken = verifyToken(token)
-            const newUser = User.create(decToken)
-            const message = {
-                msg: "user has succesfully created",
-                userId: newUser.id,
+            if (!decToken.username) {
+                return res.status(400).json('wrong code')
+            } else {
+                const userEqEmail = await User.findAll({ where: {email: decToken.email}})
+                const userEqUsername = await User.findAll({ where: {username: decToken.username}})
+                console.log(userEqEmail, userEqUsername)
+                if (userEqEmail.length == 0 && userEqUsername.length == 0) {
+                    console.log('-------user succ reg')
+                    const newUser = User.create(decToken)
+                    const message = {
+                        msg: "user has succesfully created",
+                        userId: newUser.id,
+                    }
+                    res.json(message)
+                } else {
+                    res.status(403).json('user already existed')
+                }
             }
-            res.json(message)
         } catch (err) {
             console.log(err)
             res.status(500).json("oops, an occured error while creating user")
@@ -36,11 +48,12 @@ export const sendMailToRegister = async (req, res) => {
         username: data.username,
         email: data.email,
         password: data.password,
-        phoneNumber: data.phoneNumber
+        phoneNumber: data.phoneNumber,
     }
-
     const userEqEmail = await User.findAll({where: {email: data.email}})
     const userEqUsername = await User.findAll({where: {username: data.username}})
+    console.log(userEqEmail)
+    console.log(userEqUsername)
     if (userEqEmail.length == 0 && userEqUsername.length == 0) {
         try {
             const newToken = getToken(cleanData)
@@ -50,7 +63,7 @@ export const sendMailToRegister = async (req, res) => {
             const mailMsg = {
                 to: cleanData.email,
                 subject: "email verify",
-                text: `click to this link to complete register http://localhost:8000/api/final_register/${newToken}`
+                text: `click to this link to complete register http://localhost:3000/verify?token=${newToken}`
             }
             await sendMailMsg(mailMsg.to, mailMsg.subject, mailMsg.text)
             res.json(message)

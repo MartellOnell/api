@@ -10,16 +10,16 @@ const inVector = Buffer.from(initialVector, 'utf8')
 const algo = process.env.ENC_ALGORITHMS
 const jwtSecKey = privateKey
 
-const cipher = crypto.createCipheriv(algo, secKey, inVector)
-const decipher = crypto.createDecipheriv(algo, secKey, inVector)
 
 const encryptToken = token => {
+    const cipher = crypto.createCipheriv(algo, secKey, inVector)
     let encData = cipher.update(token, "utf-8", "hex")
     encData += cipher.final("hex")
     return encData
 }
 
 const decryptToken = encryptToken => {
+    const decipher = crypto.createDecipheriv(algo, secKey, inVector)
     let decData = decipher.update(encryptToken, "hex", "utf-8")
     decData += decipher.final("utf8")
     return decData

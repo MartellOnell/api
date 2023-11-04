@@ -6,7 +6,6 @@ import { sequelize } from "./database/db.js"
 dotenv.config({ path: './.env' })
 
 const port = process.env.NODE_PORT
-console.log(process.env)
 let app = express()
 
 try {
