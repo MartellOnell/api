@@ -1,5 +1,10 @@
 import { User } from "../database/models.js"
-import { getRegisterToken, verifyToken, getAuthToken } from "./jwt-sign-decode.js"
+import { 
+    getRegisterToken, 
+    verifyToken, 
+    getAuthToken, 
+    getChangeDataToken
+} from "./jwt-sign-decode.js"
 import { sendMailMsg } from "../mail/mail-client.js"
 
 export const login = async (req, res) => {
@@ -15,7 +20,7 @@ export const login = async (req, res) => {
         userEmailExist = await User.findAll({where: {email: data.username}})
     } catch (err) {
         console.log(err)
-        return res.status(500).json({msg: ""})
+        return res.status(500).json({msg: "db error"})
     }
 
     if (userEmailExist.length !== 0 || userUsernameExist.length !== 0) {
@@ -37,6 +42,63 @@ export const login = async (req, res) => {
         }
     }
     return res.status(404).json("wrong data")
+}
+
+export const sendMailChangeEmail = async (req, res) => {
+    const data = req.body
+    const token = data.token
+
+    const decToken = verifyToken(token)
+    try {
+        const changeData = {
+            method: "change email",
+            oldEmail: decToken.email
+        }
+        const changeToken = getChangeDataToken(changeData)
+        const mailMsg = {
+            to: changeData.email,
+            subject: "email verify",
+            text: `click to change email
+            http://localhost:3000/changeEmail?token=${changeToken}`
+        }
+
+        await sendMailMsg(mailMsg.to, mailMsg.subject, mailMsg.text)
+        return res.json({msg: "mail has successfully sent"})
+
+    } catch {
+        return res.status(500).json("oops, an error occurred")
+    }
+}
+
+// req.body: {
+//     changeToken: <changeToken from searchParams>,
+//     token: <token from cookie>,
+//     newEmail: <email from input on frontend>
+// }
+export const finalMailChange = async (req, res) => {
+    try {
+        const data = req.body
+        const decChangeToken = verifyToken(data.changeToken)
+
+        if (decChangeToken.method === "change email") {
+            const user = await User.findAll({where: {permissions: "default", email: decChangeToken.oldEmail}})[0]
+            user.email = data.newEmail
+            user.save()
+            const newAuthToken = getAuthToken({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                permissions: user.permissions
+            })
+            return res.json({msg: "successfully change email", token: newAuthToken})
+        } else {
+            throw Error("email not found!")
+        }
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({msg: "oops, an error occurred"})
+    }
 }
 
 export const finalMailRegister = async (req, res) => {
@@ -100,7 +162,7 @@ export const sendMailToRegister = async (req, res) => {
         try {
             const newToken = getRegisterToken(cleanData)
             const message = {
-                msg: "mail has succesfully sended"
+                msg: "mail has succesfully sent"
             }
             const mailMsg = {
                 to: cleanData.email,

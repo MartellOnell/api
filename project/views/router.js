@@ -1,5 +1,7 @@
 import express from "express"
 import { sendMailToRegister, finalMailRegister, login } from "./userControllers.js"
+import { HavePermissions } from "./decorators.js"
+import { createAdmin } from "./adminController.js"
 
 export const router = express.Router()
 
@@ -19,11 +21,8 @@ router.post("/api/final_register", async (req, res) => {
     await finalMailRegister(req, res)
 })
 
-router.get("/api/test/:token", async (req, res) => {
-    const getToken = req.params.token
-    if (token == getToken) {
-        res.json('url wasnt cutting url route')
-    } else {
-        res.json('url token was cutted')
-    }
+router.post("/api/admin/register", async (req, res, next) => {
+    await HavePermissions(req, res, "platform admin", next)
+}, async (req, res) => {
+    await createAdmin(req, res)
 })

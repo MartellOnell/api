@@ -1,4 +1,4 @@
-import { verifyToken } from "./jwt-sign-decode"
+import { verifyToken } from "./jwt-sign-decode.js"
 
 export const TokenRequired = async (req, res, next) => {
     const data = req.body
@@ -12,14 +12,20 @@ export const TokenRequired = async (req, res, next) => {
     }
 }
 
-export const HavePermissions = async (req, res, next) => {
+export const HavePermissions = async (req, res, perms, next) => {
     const data = req.body
     const token = data.token
-    const userId = data.id
 
-    const decToken = verifyToken(token)
+    let decToken = ''
+    try {
+        decToken = verifyToken(token)
+    } catch {
+        return res.status(500).json({msg: "token error"})
+    }
+
+
     if (decToken !== "error, key is valid") {
-        if (decToken.id == userId) {
+        if (perms === decToken.permissions) {
             next()
         } else {
             return res.status(403).json("permission denied")

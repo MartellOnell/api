@@ -30,8 +30,13 @@ export const getRegisterToken = data => {
     return encryptToken(token)
 }
 
+export const getChangeDataToken = data => {
+    const token = jwt.sign(data, jwtSecKey, { expiresIn: '10m' })
+    return encryptToken(token)
+}
+
 export const getAuthToken = data => {
-    const token = jwt.sign(data, jwtSecKey, {expiresIn: '15d' })
+    const token = jwt.sign(data, jwtSecKey, { expiresIn: '15d' })
     return encryptToken(token)
 }
 
