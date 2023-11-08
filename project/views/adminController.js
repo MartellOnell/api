@@ -1,4 +1,6 @@
+import { Op } from 'sequelize'
 import { User } from '../database/models.js'
+
 
 export const createAdmin = async (req, res) => {
     const data = req.body
@@ -68,5 +70,81 @@ export const editAdmin = async (req, res) => {
         user.save()
     } catch {
         return res.status(500).json({msg: "oops, an error occurred"})
+    }
+}
+
+export const getUsersByUsernameOrEmail = async (req, res) => {
+    const data = req.body
+    if (data.username) {
+        try {
+            const whereForUsername = {
+                username: {
+                    [Op.like]: `%${data.username}%`
+                },
+                permissions: "default"
+            }
+
+            const whereForEmail = {
+                email: {
+                    [Op.like]: `%${data.username}%`
+                },
+                permissions: "default"
+            }
+
+            const usersEmail = await User.findAll({where: whereForEmail})
+            const usersUsername = await User.findAll({where: whereForUsername})
+            const users = usersEmail.concat(usersUsername)
+
+            return res.json({
+                msg: "successfully get data", 
+                data: users
+            })
+            
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                msg: "oops, an error occurred"
+            })
+        }
+    } else {
+        return res.status(404).json({msg: "empty data"})
+    }
+}
+
+export const getAdminsByUsernameOrEmail = async (req, res) => {
+    const data = req.body
+    if (data.username) {
+        try {
+            const whereForUsername = {
+                username: {
+                    [Op.like]: `%${data.username}%`
+                },
+                permissions: "admin"
+            }
+
+            const whereForEmail = {
+                email: {
+                    [Op.like]: `%${data.username}%`
+                },
+                permissions: "admin"
+            }
+
+            const usersEmail = await User.findAll({where: whereForEmail})
+            const usersUsername = await User.findAll({where: whereForUsername})
+            const users = usersEmail.concat(usersUsername)
+
+            return res.json({
+                msg: "successfully get data", 
+                data: users
+            })
+
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                msg: "oops, an error occurred"
+            })
+        }
+    } else {
+        return res.status(404).json({msg: "empty data"})
     }
 }
