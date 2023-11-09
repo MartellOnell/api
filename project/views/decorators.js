@@ -23,16 +23,13 @@ export const HavePermissions = async (req, res, perms, next) => {
         return res.status(500).json({msg: "token error"})
     }
     if (decToken !== "error, key is valid") {
-        let flag = false
         perms.map(perm => {
             if (perm === decToken.permissions) {
                 next()
-                flag = true
             }
         })
-        if (!flag) {
-            return res.status(403).json("permission denied")
-        }
+
+        return res.status(403).json("permission denied")
 
     } else {
         return res.status(403).json('token wasnt exists')
