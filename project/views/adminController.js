@@ -79,14 +79,14 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
         try {
             const whereForUsername = {
                 username: {
-                    [Op.like]: `%${data.username}%`
+                    [Op.like]: `%${data.username}`
                 },
                 permissions: "default"
             }
 
             const whereForEmail = {
                 email: {
-                    [Op.like]: `%${data.username}%`
+                    [Op.like]: `%${data.username}`
                 },
                 permissions: "default"
             }
@@ -99,7 +99,7 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
                 msg: "successfully get data", 
                 data: users
             })
-            
+
         } catch (err) {
             console.log(err)
             return res.status(500).json({
@@ -147,4 +147,17 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
     } else {
         return res.status(404).json({msg: "empty data"})
     }
+}
+
+export const uploadProductsAsFile = async (req, res) => {
+    let fstream
+    req.pipe(req.busboy)
+    req.busboy.on('file', (fieldname, file, filename) => {
+        console.log('uploading: ', filename)
+        fstream = fs.createWriteStream(__dirname + '/files/' + filename)
+        file.pipe(fstream)
+        fstream.on('close', () => {
+            return res.json("")
+        })
+    })
 }
