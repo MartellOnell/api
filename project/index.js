@@ -3,8 +3,6 @@ import dotenv from "dotenv"
 import cors from "cors"
 import { router } from "./views/router.js"
 import { sequelize } from "./database/db.js"
-import busboy from "connect-busboy"
-import * as fs from 'node:fs/promises'
 dotenv.config({ path: './.env' })
 
 const port = process.env.NODE_PORT
@@ -20,7 +18,6 @@ try {
 app.use(cors({
     origin: '*',
 }))
-app.use(busboy)
 app.use(express.json())
 app.use(router)
 app.listen(port, () => {
