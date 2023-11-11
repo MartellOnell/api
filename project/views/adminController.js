@@ -1,6 +1,11 @@
 import { Op } from 'sequelize'
-import { User } from '../database/models.js'
-
+import { User, Product } from '../database/models.js'
+import { readCsv } from '../csv_reader/csvRead.js';
+import * as fs from "fs"
+import * as url from 'url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const pathToSaveCsv = __dirname.slice(0, __dirname.length - 6) + 'csvMedia/'
 
 export const createAdmin = async (req, res) => {
     const data = req.body
@@ -150,14 +155,32 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
 }
 
 export const uploadProductsAsFile = async (req, res) => {
-    let fstream
-    req.pipe(req.busboy)
-    req.busboy.on('file', (fieldname, file, filename) => {
-        console.log('uploading: ', filename)
-        fstream = fs.createWriteStream(__dirname + '/files/' + filename)
-        file.pipe(fstream)
-        fstream.on('close', () => {
-            return res.json("")
+    const newFileName = "data" + (Math.random() * 100000).toString() + ".csv"
+    if (req.busboy) {
+        req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+            file.pipe(fs.createWriteStream(pathToSaveCsv + newFileName))
+            console.log('upload file ' + newFileName)
         })
-    })
+        req.busboy.on('finish', () => {
+            let countOfCreateRow = 0
+            readCsv(pathToSaveCsv + newFileName, (data) => {
+                Product.create(data)
+                    .then(() => {
+                        countOfCreateRow++
+                    })
+            }, () => {})
+                .then(res => {
+                    console.log(res)
+                })
+                .catch((err) => {
+                    console.log(err)
+                    console.log('succ writed rows: ' + countOfCreateRow.toString())
+                })
+            console.log('all good')
+        })
+
+        return res.json({msg: "successfully uploaded"})
+    } else {
+        return res.status(400).json('wrong data')
+    }
 }

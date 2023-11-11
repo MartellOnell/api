@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
+import busboy from "connect-busboy"
 import { router } from "./views/router.js"
 import { sequelize } from "./database/db.js"
 dotenv.config({ path: './.env' })
@@ -15,6 +16,7 @@ try {
     console.log(e)
 }
 
+app.use(busboy({immediate: true}))
 app.use(cors({
     origin: '*',
 }))
