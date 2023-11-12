@@ -58,18 +58,17 @@ export const readCsv = async (pathToFile, handleToData, handleToEnd) => {
                 })
                 .catch(err => {
                     readStream.destroy()
-                    console.log("========")
-                    console.log(err)
-                    console.log("========")
-                    console.log("closed")
-                    throw Error("some thing wrong")
                 })
         })
         .on('end', () => {
-            handleToEnd()
-            return "all data saved"
+            return "data saved"
         })
         .on('close', (err) => {
+            if (err) {
+                console.log(err)
+            } else {
+                handleToEnd()
+            }
             console.log("closed")
         })
 } 

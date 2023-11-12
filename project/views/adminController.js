@@ -162,21 +162,11 @@ export const uploadProductsAsFile = async (req, res) => {
             console.log('upload file ' + newFileName)
         })
         req.busboy.on('finish', () => {
-            let countOfCreateRow = 0
             readCsv(pathToSaveCsv + newFileName, (data) => {
                 Product.create(data)
-                    .then(() => {
-                        countOfCreateRow++
-                    })
-            }, () => {})
-                .then(res => {
-                    console.log(res)
-                })
-                .catch((err) => {
-                    console.log(err)
-                    console.log('succ writed rows: ' + countOfCreateRow.toString())
-                })
-            console.log('all good')
+            }, () => {
+                fs.unlinkSync(pathToSaveCsv + newFileName)
+            })
         })
 
         return res.json({msg: "successfully uploaded"})
