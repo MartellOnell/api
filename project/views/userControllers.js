@@ -41,7 +41,7 @@ export const login = async (req, res) => {
             return res.json(message)
         }
     }
-    return res.status(404).json("wrong data")
+    return res.status(404).json({msg: "wrong data"})
 }
 
 export const sendMailChangeEmail = async (req, res) => {
@@ -66,7 +66,7 @@ export const sendMailChangeEmail = async (req, res) => {
         return res.json({msg: "mail has successfully sent"})
 
     } catch {
-        return res.status(500).json("oops, an error occurred")
+        return res.status(500).json({msg: "oops, an error occurred"})
     }
 }
 
@@ -136,12 +136,12 @@ export const finalMailRegister = async (req, res) => {
                     }
                     res.json(message)
                 } else {
-                    res.status(403).json('user already existed')
+                    res.status(403).json({msg: 'user already existed'})
                 }
             }
         } catch (err) {
             console.log(err)
-            res.status(500).json("oops, an occured error while creating user")
+            res.status(500).json({msg: "oops, an occured error while creating user"})
         }
     }
 }
@@ -173,9 +173,9 @@ export const sendMailToRegister = async (req, res) => {
             res.json(message)
         } catch (err) {
             console.log(err)
-            res.status(500).json("oops, an occured error while sending email")
+            res.status(500).json({msg: "oops, an occured error while sending email"})
         }
     } else {
-        res.status(400).json("user already exists")
+        res.status(400).json({msg: "user already exists"})
     }
 }
