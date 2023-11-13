@@ -43,7 +43,8 @@ export const Product = sequelize.define('Product', {
     },
     nomenclature: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: true,
     },
     manufacturer: {
         type: DataTypes.STRING,
