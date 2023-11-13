@@ -83,14 +83,14 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
     if (data.username) {
         const whereForUsername = {
             username: {
-                [Op.like]: `%${data.username}`
+                [Op.like]: `%${data.username}%`
             },
             permissions: "default"
         }
 
         const whereForEmail = {
             email: {
-                [Op.like]: `%${data.username}`
+                [Op.like]: `%${data.username}%`
             },
             permissions: "default"
         }
