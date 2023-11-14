@@ -4,6 +4,7 @@ import { HavePermissions } from "./decorators.js"
 import { 
     createAdmin, 
     getAdminsByUsernameOrEmail, 
+    getAllUsersByOffset, 
     getUsersByUsernameOrEmail,
     uploadProductsAsFile,
 } from "./adminController.js"
@@ -44,10 +45,18 @@ router.post("/api/admin/getAdmins", async (req, res, next) => {
     await getAdminsByUsernameOrEmail(req, res)
 })
 
-router.post("/api/admin/test", async (req, res) => {
+router.post("/api/admin/uploadProductsByCsv",async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
     await uploadProductsAsFile(req, res)
 })
 
 router.post("/api/checkPerms", async (req, res) => {
     await checkPerms(req, res)
+})
+
+router.post("/api/admin/getAllUsersOffset", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await getAllUsersByOffset(req, res)
 })

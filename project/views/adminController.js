@@ -166,3 +166,18 @@ export const uploadProductsAsFile = async (req, res) => {
         return res.status(400).json('wrong data')
     }
 }
+
+export const getAllUsersByOffset = async (req, res) => {
+    const data = req.body
+    const offset = data.offset
+
+    const users = await User.findAll({
+        where: {
+            permissions: "default"
+        },
+        limit: 10,
+        offset: parseInt(offset),
+    })
+
+    return res.json({msg: "successfully get users", data: users})
+}
