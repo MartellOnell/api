@@ -107,7 +107,7 @@ export const finalMailRegister = async (req, res) => {
         const message = {
             msg: "wrong code"
         }
-        res.status(400).json(message)
+        return res.status(400).json(message)
     } else {
         try {
             const decToken = verifyToken(token)
@@ -134,14 +134,14 @@ export const finalMailRegister = async (req, res) => {
                         token: authToken,
                         userId: newUser.id,
                     }
-                    res.json(message)
+                    return res.json(message)
                 } else {
-                    res.status(403).json({msg: 'user already existed'})
+                    return res.status(403).json({msg: 'user already existed'})
                 }
             }
         } catch (err) {
             console.log(err)
-            res.status(500).json({msg: "oops, an occured error while creating user"})
+            return res.status(500).json({msg: "oops, an occured error while creating user"})
         }
     }
 }
@@ -170,13 +170,13 @@ export const sendMailToRegister = async (req, res) => {
                 text: `click to this link to complete register http://localhost:3000/verify?token=${newToken}`
             }
             await sendMailMsg(mailMsg.to, mailMsg.subject, mailMsg.text)
-            res.json(message)
+            return res.json(message)
         } catch (err) {
             console.log(err)
-            res.status(500).json({msg: "oops, an occured error while sending email"})
+            return res.status(500).json({msg: "oops, an occured error while sending email"})
         }
     } else {
-        res.status(400).json({msg: "user already exists"})
+        return res.status(400).json({msg: "user already exists"})
     }
 }
 
