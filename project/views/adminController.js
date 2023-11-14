@@ -97,7 +97,7 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
 
         const usersEmail = await User.findAll({where: whereForEmail})
         const usersUsername = await User.findAll({where: whereForUsername})
-        const users = usersEmail.concat(usersUsername)
+        const users = {username: usersUsername, email: usersEmail}
 
         return res.json({
             msg: "successfully get data", 
