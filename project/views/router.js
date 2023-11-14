@@ -1,5 +1,5 @@
 import express from "express"
-import { sendMailToRegister, finalMailRegister, login } from "./userControllers.js"
+import { sendMailToRegister, finalMailRegister, login, checkPerms } from "./userControllers.js"
 import { HavePermissions } from "./decorators.js"
 import { 
     createAdmin, 
@@ -46,4 +46,8 @@ router.post("/api/admin/getAdmins", async (req, res, next) => {
 
 router.post("/api/admin/test", async (req, res) => {
     await uploadProductsAsFile(req, res)
+})
+
+router.post("/api/checkPerms", async (req, res) => {
+    await checkPerms(req, res)
 })

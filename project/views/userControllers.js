@@ -179,3 +179,16 @@ export const sendMailToRegister = async (req, res) => {
         res.status(400).json({msg: "user already exists"})
     }
 }
+
+// data: {token: "<token>", checkPerms: ""}
+export const checkPerms = async (req, res) => {
+    const data = req.body
+    const decToken = verifyToken(data.token)
+
+    if (decToken !== "error, key is valid") {
+        const state = data.checkPerms === decToken.permissions
+        return res.json({msg: state})
+    } else {
+        return res.status(403).json({msg: "key exists"})
+    }
+}
