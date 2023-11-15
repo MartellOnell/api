@@ -81,6 +81,11 @@ export const editAdmin = async (req, res) => {
 export const getUsersByUsernameOrEmail = async (req, res) => {
     const data = req.body
     if (data.username) {
+        const limitAtributes = {
+            limit: 10,
+            offset: parseInt(data.offset)
+        }
+
         const whereForUsername = {
             username: {
                 [Op.like]: `%${data.username}%`
@@ -95,8 +100,8 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
             permissions: "default"
         }
 
-        const usersEmail = await User.findAll({where: whereForEmail})
-        const usersUsername = await User.findAll({where: whereForUsername})
+        const usersEmail = await User.findAll({where: whereForEmail}, ...limitAtributes)
+        const usersUsername = await User.findAll({where: whereForUsername}, ...limitAtributes)
         const users = {username: usersUsername, email: usersEmail}
 
         return res.json({
@@ -112,11 +117,16 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
     const data = req.body
     if (data.username) {
         try {
+            const limitAtributes = {
+                limit: 10,
+                offset: parseInt(data.offset)
+            }
+
             const whereForUsername = {
                 username: {
                     [Op.like]: `%${data.username}%`
                 },
-                permissions: "admin"
+                permissions: "admin",
             }
 
             const whereForEmail = {
@@ -126,8 +136,8 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
                 permissions: "admin"
             }
 
-            const usersEmail = await User.findAll({where: whereForEmail})
-            const usersUsername = await User.findAll({where: whereForUsername})
+            const usersEmail = await User.findAll({where: whereForEmail}, ...limitAtributes)
+            const usersUsername = await User.findAll({where: whereForUsername}, ...limitAtributes)
             const users = {username: usersUsername, email: usersEmail}
 
             return res.json({
