@@ -100,8 +100,16 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
             permissions: "default"
         }
 
-        const usersEmail = await User.findAll({where: whereForEmail}, ...limitAtributes)
-        const usersUsername = await User.findAll({where: whereForUsername}, ...limitAtributes)
+        const usersEmail = await User.findAll({
+            where: whereForEmail,
+            limit: limitAtributes.limit,
+            offset: limitAtributes.offset
+        })
+        const usersUsername = await User.findAll({
+            where: whereForUsername,
+            limit: limitAtributes.limit,
+            offset: limitAtributes.offset
+        })
         const users = {username: usersUsername, email: usersEmail}
 
         return res.json({
