@@ -82,12 +82,12 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
             permissions: "default"
         }
 
-        const {countEmail, usersEmail} = await User.findAndCountAll({
+        const {count : countEmail, rows : usersEmail} = await User.findAndCountAll({
             where: whereForEmail,
             limit: limitAtributes.limit,
             offset: limitAtributes.offset
         })
-        const {countUsername, usersUsername} = await User.findAndCountAll({
+        const {count : countUsername, rows : usersUsername} = await User.findAndCountAll({
             where: whereForUsername,
             limit: limitAtributes.limit,
             offset: limitAtributes.offset
@@ -127,8 +127,8 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
                 permissions: "admin"
             }
 
-            const {countEmail, usersEmail} = await User.findAndCountAll({where: whereForEmail}, ...limitAtributes)
-            const {countUsername, usersUsername} = await User.findAndCountAll({where: whereForUsername}, ...limitAtributes)
+            const {count : countEmail, rows : usersEmail} = await User.findAndCountAll({where: whereForEmail}, ...limitAtributes)
+            const {count : countUsername, rows : usersUsername} = await User.findAndCountAll({where: whereForUsername}, ...limitAtributes)
             const users = {username: usersUsername, email: usersEmail}
 
             return res.json({
@@ -173,7 +173,7 @@ export const getAllUsersByOffset = async (req, res) => {
     const data = req.body
     const offset = data.offset
 
-    const {count, users} = await User.findAndCountAll({
+    const {count, rows : users} = await User.findAndCountAll({
         where: {
             permissions: "default"
         },
