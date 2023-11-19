@@ -43,24 +43,6 @@ export const createAdmin = async (req, res) => {
     }
 }
 
-export const getAdminsList = async (req, res) => {
-    try {
-        let users = await User.findAll({where: {permissions: "admin"}})
-        return res.json({msg: 'successful', data: users})
-    } catch {
-        return res.status(500).json({msg: "oops, an error occurred"})
-    }
-}
-
-export const getUsersList = async (req, res) => {
-    try {
-        let users = await User.findAll({where: {permissions: "default"}})
-        return res.json({msg: "successful", data: users})
-    } catch {
-        return res.status(500).json({msg: "oops, an error occurred"})
-    }
-}
-
 export const editAdmin = async (req, res) => {
     const newData = req.body.new
     const data = req.body.old
@@ -100,12 +82,12 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
             permissions: "default"
         }
 
-        const usersEmail = await User.findAll({
+        const {countEmail, usersEmail} = await User.findAndCountAll({
             where: whereForEmail,
             limit: limitAtributes.limit,
             offset: limitAtributes.offset
         })
-        const usersUsername = await User.findAll({
+        const {countUsername, usersUsername} = await User.findAndCountAll({
             where: whereForUsername,
             limit: limitAtributes.limit,
             offset: limitAtributes.offset
@@ -113,8 +95,9 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
         const users = {username: usersUsername, email: usersEmail}
 
         return res.json({
-            msg: "successfully get data", 
-            data: users
+            msg: "successfully get data",
+            data: users,
+            counter: Math.max(countEmail, countUsername)
         })
     } else {
         return res.status(404).json({msg: "empty data"})
@@ -144,13 +127,14 @@ export const getAdminsByUsernameOrEmail = async (req, res) => {
                 permissions: "admin"
             }
 
-            const usersEmail = await User.findAll({where: whereForEmail}, ...limitAtributes)
-            const usersUsername = await User.findAll({where: whereForUsername}, ...limitAtributes)
+            const {countEmail, usersEmail} = await User.findAndCountAll({where: whereForEmail}, ...limitAtributes)
+            const {countUsername, usersUsername} = await User.findAndCountAll({where: whereForUsername}, ...limitAtributes)
             const users = {username: usersUsername, email: usersEmail}
 
             return res.json({
                 msg: "successfully get data", 
-                data: users
+                data: users,
+                counter: Math.max(countEmail, countUsername)
             })
 
         } catch (err) {
@@ -189,7 +173,7 @@ export const getAllUsersByOffset = async (req, res) => {
     const data = req.body
     const offset = data.offset
 
-    const users = await User.findAll({
+    const {count, users} = await User.findAndCountAll({
         where: {
             permissions: "default"
         },
@@ -197,5 +181,43 @@ export const getAllUsersByOffset = async (req, res) => {
         offset: parseInt(offset),
     })
 
-    return res.json({msg: "successfully get users", data: users})
+    return res.json({msg: "successfully get users", data: users, counter: count})
+}
+
+export const createProduct = async (req, res) => {
+    const data = req.body
+    const cleanData = {
+        name: data.name,
+        nomenclature: data.nomenclature,
+        manufacturer: data.manufacturer,
+        coast: data.coast,
+        category: data.category,
+        subcategory: data.subcategory,
+        tip: data.tip,
+    }
+    if (data.color) cleanData.color = data.color;
+    if (data.vendorCode) cleanData.vendorCode = data.vendorCode;
+
+    Product.create(cleanData)
+        .then(res => {
+            return res.json({msg: "successfully created"})
+        })
+        .catch(err => {
+            return res.status(500).json("oops, an error occured while creating Product")
+        })
+}
+
+export const editProduct = async (req, res) => {
+    const data = req.body
+    const cleanData = {
+        name: data.name,
+        nomenclature: data.nomenclature,
+        manufacturer: data.manufacturer,
+        coast: data.coast,
+        category: data.category,
+        subcategory: data.subcategory,
+        tip: data.tip,
+    }
+    if (data.color) cleanData.color = data.color;
+    if (data.vendorCode) cleanData.vendorCode = data.vendorCode;
 }
