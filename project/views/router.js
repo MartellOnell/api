@@ -2,7 +2,7 @@ import express from "express"
 import { sendMailToRegister, finalMailRegister, login, checkPerms } from "./userControllers.js"
 import { HavePermissions } from "./decorators.js"
 import {
-    createAdmin, editAdmin, editUser,
+    createAdmin, createProduct, editAdmin, editProduct, editUser,
     getAdminsByUsernameOrEmail,
     getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
     getUsersByUsernameOrEmail,
@@ -74,13 +74,25 @@ router.post("/api/admin/getCurrentAdminById", async (req, res, next) => {
 })
 
 router.post("/api/admin/editUser", async (req, res, next) => {
-    await HavePermissions(req, res, ["admin", "platform admin"])
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
 }, async (req, res) => {
     await editUser(req, res)
 })
 
 router.post("/api/admin/editAdmin", async (req, res, next) => {
-    await HavePermissions(req, res, ["platform admin"])
+    await HavePermissions(req, res, ["platform admin"], next)
 }, async (req, res) => {
     await editAdmin(req, res)
+})
+
+router.post("/api/admin/uploadProduct", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await createProduct(req, res)
+})
+
+router.post("/api/admin/editProduct", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await editProduct(req, res)
 })
