@@ -1,10 +1,10 @@
 import express from "express"
 import { sendMailToRegister, finalMailRegister, login, checkPerms } from "./userControllers.js"
 import { HavePermissions } from "./decorators.js"
-import { 
-    createAdmin, 
-    getAdminsByUsernameOrEmail, 
-    getAllUsersByOffset, 
+import {
+    createAdmin, editAdmin, editUser,
+    getAdminsByUsernameOrEmail,
+    getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
     getUsersByUsernameOrEmail,
     uploadProductsAsFile,
 } from "./adminController.js"
@@ -59,4 +59,28 @@ router.post("/api/admin/getAllUsersOffset", async (req, res, next) => {
     await HavePermissions(req, res, ["admin", "platform admin"], next)
 }, async (req, res) => {
     await getAllUsersByOffset(req, res)
+})
+
+router.post("/api/admin/getCurrentUserById", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await getCurrentUserById(req, res)
+})
+
+router.post("/api/admin/getCurrentAdminById", async (req, res, next) => {
+    await HavePermissions(req, res, ["platform admin"], next)
+}, async (req, res) => {
+    await getCurrentAdminById(req, res)
+})
+
+router.post("/api/admin/editUser", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"])
+}, async (req, res) => {
+    await editUser(req, res)
+})
+
+router.post("/api/admin/editAdmin", async (req, res, next) => {
+    await HavePermissions(req, res, ["platform admin"])
+}, async (req, res) => {
+    await editAdmin(req, res)
 })

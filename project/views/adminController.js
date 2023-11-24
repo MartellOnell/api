@@ -49,12 +49,22 @@ export const editAdmin = async (req, res) => {
 
     let user = ''
     try {
-        user = User.findAll({where: {username: data.username}})[0]
+        user = await User.findAll({
+            where: {
+                username: data.username,
+                permissions: "admin"
+            }
+        })[0]
         user.username = newData.username
         user.password = newData.password
         user.email = newData.email
         user.phoneNumber = newData.phoneNumber
         user.save()
+
+        return res.json({
+            msg: "successfully reedit admin",
+            newData: user
+        })
     } catch {
         return res.status(500).json({msg: "oops, an error occurred"})
     }
@@ -220,4 +230,94 @@ export const editProduct = async (req, res) => {
     }
     if (data.color) cleanData.color = data.color;
     if (data.vendorCode) cleanData.vendorCode = data.vendorCode;
+
+    const product = Product.findOne({
+        where: {
+            nomenclature: cleanData.nomenclature
+        },
+    })
+
+    product.name = cleanData.name
+    product.nomenclature = cleanData.nomenclature
+    product.manufacturer = cleanData.manufacturer
+    product.coast = cleanData.coast
+    product.category = cleanData.category
+    product.subcategory = cleanData.subcategory
+    product.tip = cleanData.tip
+    if (cleanData.color) product.color = cleanData.color
+    if (cleanData.vendorCode) product.vendorCode = cleanData.vendorCode
+    product.save()
+
+    return res.json({
+        msg: "data successfully reedit product",
+        data: product
+    })
+}
+
+export const editUser = async (req, res) => {
+    const newData = req.body.new
+    const data = req.body.old
+
+    let user = ''
+    try {
+        user = User.findAll({
+            where: {
+                username: data.username,
+                permissions: "default"
+            }
+        })[0]
+        user.username = newData.username
+        user.password = newData.password
+        user.email = newData.email
+        user.phoneNumber = newData.phoneNumber
+        user.save()
+
+        return res.json({
+            msg: "successfully reedit user"
+        })
+    } catch {
+        return res.status(500).json({msg: "oops, an error occurred"})
+    }
+}
+
+export const getCurrentUserById = async (req, res) => {
+    const data = req.body
+    if (data.id != undefined) {
+        const user = await User.findOne({
+            where: {
+                id: data.id,
+                permissions: "default"
+            }
+        })
+        if (user != undefined) {
+            return res.json({
+                msg: "successfully found user",
+                data: user
+            })
+        }
+    }
+    return res.status(404).json({
+        msg: "this user doesn't exists"
+    })
+}
+
+export const getCurrentAdminById = async (req, res) => {
+    const data = req.body
+    if (data.id != undefined) {
+        const user = await User.findOne({
+            where: {
+                id: data.id,
+                permissions: "admin"
+            }
+        })
+        if (user != undefined) {
+            return res.json({
+                msg: "successfully found user",
+                data: user
+            })
+        }
+    }
+    return res.status(404).json({
+        msg: "this user doesn't exists"
+    })
 }
