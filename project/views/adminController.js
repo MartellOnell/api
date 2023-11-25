@@ -45,13 +45,12 @@ export const createAdmin = async (req, res) => {
 
 export const editAdmin = async (req, res) => {
     const newData = req.body.new
-    const data = req.body.old
 
     let user = ''
     try {
         user = await User.findAll({
             where: {
-                username: data.username,
+                id: newData.id,
                 permissions: "admin"
             }
         })[0]
@@ -256,13 +255,12 @@ export const editProduct = async (req, res) => {
 
 export const editUser = async (req, res) => {
     const newData = req.body.new
-    const data = req.body.old
 
     let user = ''
     try {
         user = User.findAll({
             where: {
-                username: data.username,
+                id: newData.id,
                 permissions: "default"
             }
         })[0]
