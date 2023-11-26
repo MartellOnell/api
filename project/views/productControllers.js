@@ -4,6 +4,7 @@ import { Product } from "../database/models"
 export const getProductsByOffset = async (req, res) => {
     const data = req.body
 
+    // make sort on coast
     const {count, rows : products} = Product.findAndCountAll({
         where: {
             subcategory: { [Op.like]: `%${data.subcategory}%`, },
@@ -12,6 +13,7 @@ export const getProductsByOffset = async (req, res) => {
             color: { [Op.like]: `%${data.color}%`, }
         },
         limit: 10,
+        //order: {}, re write column coast to nums
         offset: data.offset
     })
 

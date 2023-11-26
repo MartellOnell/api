@@ -1,6 +1,6 @@
 import express from "express"
 import { sendMailToRegister, finalMailRegister, login, checkPerms } from "./userControllers.js"
-import { HavePermissions } from "./decorators.js"
+import {HavePermissions, TokenRequired} from "./decorators.js"
 import {
     createAdmin, createProduct, editAdmin, editProduct, editUser,
     getAdminsByUsernameOrEmail,
@@ -99,7 +99,7 @@ router.post("/api/admin/editProduct", async (req, res, next) => {
 })
 
 router.post("/api/products/getProductsByOffset", async (req, res, next) => {
-    await HavePermissions(req, res, ["admin", "platform admin"], next)
+    await TokenRequired(req, res, next)
 }, async (req, res) => {
     await getProductsByOffset(req, res)
 })
