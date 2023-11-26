@@ -258,7 +258,7 @@ export const editUser = async (req, res) => {
 
     let user = ''
     try {
-        user = User.findAll({
+        user = await User.findAll({
             where: {
                 id: newData.id,
                 permissions: "default"
