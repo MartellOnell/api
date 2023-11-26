@@ -8,6 +8,7 @@ import {
     getUsersByUsernameOrEmail,
     uploadProductsAsFile,
 } from "./adminController.js"
+import {getProductsByOffset} from "./productControllers.js";
 
 export const router = express.Router()
 
@@ -95,4 +96,10 @@ router.post("/api/admin/editProduct", async (req, res, next) => {
     await HavePermissions(req, res, ["admin", "platform admin"], next)
 }, async (req, res) => {
     await editProduct(req, res)
+})
+
+router.post("/api/products/getProductsByOffset", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await getProductsByOffset(req, res)
 })

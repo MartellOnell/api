@@ -230,7 +230,7 @@ export const editProduct = async (req, res) => {
     if (data.color) cleanData.color = data.color;
     if (data.vendorCode) cleanData.vendorCode = data.vendorCode;
 
-    const product = Product.findOne({
+    const product = await Product.findOne({
         where: {
             nomenclature: cleanData.nomenclature
         },
