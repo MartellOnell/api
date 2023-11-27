@@ -1,4 +1,5 @@
 import { Product } from "../database/models"
+import { Op } from "sequelize";
 
 // {offset category subcategory tip color coast}
 export const getProductsByOffset = async (req, res) => {
@@ -10,10 +11,14 @@ export const getProductsByOffset = async (req, res) => {
             subcategory: { [Op.like]: `%${data.subcategory}%`, },
             category: { [Op.like]: `%${data.category}%`, },
             tip: { [Op.like]: `%${data.tip}%`, },
-            color: { [Op.like]: `%${data.color}%`, }
+            color: { [Op.like]: `%${data.color}%`, },
+            coast: {
+                [Op.gte]: data.minCoast,
+                [Op.lte]: data.maxCoast
+            }
         },
         limit: 10,
-        //order: {}, re write column coast to nums
+        // order: {}, пока отключаем, я хз как это работает
         offset: data.offset
     })
 
