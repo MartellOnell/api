@@ -113,50 +113,6 @@ export const getUsersByUsernameOrEmail = async (req, res) => {
     }
 }
 
-export const getAdminsByUsernameOrEmail = async (req, res) => {
-    const data = req.body
-    if (data.username) {
-        try {
-            const limitAtributes = {
-                limit: 10,
-                offset: parseInt(data.offset)
-            }
-
-            const whereForUsername = {
-                username: {
-                    [Op.like]: `%${data.username}%`
-                },
-                permissions: "admin",
-            }
-
-            const whereForEmail = {
-                email: {
-                    [Op.like]: `%${data.username}%`
-                },
-                permissions: "admin"
-            }
-
-            const {count : countEmail, rows : usersEmail} = await User.findAndCountAll({where: whereForEmail}, ...limitAtributes)
-            const {count : countUsername, rows : usersUsername} = await User.findAndCountAll({where: whereForUsername}, ...limitAtributes)
-            const users = {username: usersUsername, email: usersEmail}
-
-            return res.json({
-                msg: "successfully get data", 
-                data: users,
-                counter: Math.max(countEmail, countUsername)
-            })
-
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                msg: "oops, an error occurred"
-            })
-        }
-    } else {
-        return res.status(404).json({msg: "empty data"})
-    }
-}
-
 export const uploadProductsAsFile = async (req, res) => {
     const newFileName = "data" + (Math.random() * 100000).toString() + ".csv"
     if (req.busboy) {
@@ -317,5 +273,18 @@ export const getCurrentAdminById = async (req, res) => {
     }
     return res.status(404).json({
         msg: "this user doesn't exists"
+    })
+}
+
+export const getAllAdmins = async (req, res) => {
+    const admins = await User.findAll({
+        where: {
+            permissions: "admin",
+        }
+    })
+
+    return res.json({
+        msg: "successfully get users",
+        data: admins,
     })
 }

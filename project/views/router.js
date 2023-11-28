@@ -2,8 +2,7 @@ import express from "express"
 import { sendMailToRegister, finalMailRegister, login, checkPerms } from "./userControllers.js"
 import {HavePermissions, TokenRequired} from "./decorators.js"
 import {
-    createAdmin, createProduct, editAdmin, editProduct, editUser,
-    getAdminsByUsernameOrEmail,
+    createAdmin, createProduct, editAdmin, editProduct, editUser, getAllAdmins,
     getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
     getUsersByUsernameOrEmail,
     uploadProductsAsFile,
@@ -38,12 +37,6 @@ router.post("/api/admin/getUsers", async (req, res, next) => {
     await HavePermissions(req, res, ["platform admin", "admin"], next)
 }, async (req, res) => {
     await getUsersByUsernameOrEmail(req, res)
-})
-
-router.post("/api/admin/getAdmins", async (req, res, next) => {
-    await HavePermissions(req, res, ["platform admin"], next)
-}, async (req, res) => {
-    await getAdminsByUsernameOrEmail(req, res)
 })
 
 router.post("/api/admin/uploadProductsByCsv",async (req, res, next) => {
@@ -102,4 +95,10 @@ router.post("/api/products/getProductsByOffset", async (req, res, next) => {
     await TokenRequired(req, res, next)
 }, async (req, res) => {
     await getProductsByOffset(req, res)
+})
+
+router.post("/api/admin/getAllAdmins", async (req, res, next) => {
+    await HavePermissions(req, res, ["platform admin"], next)
+}, async (req, res) => {
+    await getAllAdmins(req, res)
 })
