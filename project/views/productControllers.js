@@ -1,4 +1,4 @@
-import { Product } from "../database/models"
+import { Product } from "../database/models.js"
 import { Op } from "sequelize";
 
 // {offset category subcategory tip color coast}
