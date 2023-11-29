@@ -9,16 +9,9 @@ const stringIterToLike = array => {
     return copy
 }
 
-// {offset category subcategory tip color coast}
 export const getProductsByOffset = async (req, res) => {
     const data = req.body
 
-    // let findOptions = {
-    //     subcategory: { [Op.like]: `%${data.subcategory}%`, },
-    //     category: { [Op.like]: `%${data.category}%`, },
-    //     tip: { [Op.like]: `%${data.tip}%`, },
-    //     color: { [Op.like]: `%${data.color}%`, },
-    // }
     let findOptions = {
         subcategory: {
             [Op.or]: stringIterToLike(data.subcategory),
