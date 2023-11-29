@@ -1,14 +1,37 @@
 import { Product } from "../database/models.js"
 import { Op } from "sequelize";
 
+const stringIterToLike = array => {
+    let copy = []
+    for (let i = 0; i < array.length; i++) {
+        copy.push({[Op.like]: `%${array[i]}%`})
+    }
+    return copy
+}
+
 // {offset category subcategory tip color coast}
 export const getProductsByOffset = async (req, res) => {
     const data = req.body
+
+    // let findOptions = {
+    //     subcategory: { [Op.like]: `%${data.subcategory}%`, },
+    //     category: { [Op.like]: `%${data.category}%`, },
+    //     tip: { [Op.like]: `%${data.tip}%`, },
+    //     color: { [Op.like]: `%${data.color}%`, },
+    // }
     let findOptions = {
-        subcategory: { [Op.like]: `%${data.subcategory}%`, },
-        category: { [Op.like]: `%${data.category}%`, },
-        tip: { [Op.like]: `%${data.tip}%`, },
-        color: { [Op.like]: `%${data.color}%`, },
+        subcategory: {
+            [Op.or]: stringIterToLike(data.subcategory),
+        },
+        category: {
+            [Op.or]: stringIterToLike(data.category)
+        },
+        tip: {
+            [Op.or]: stringIterToLike(data.tip)
+        },
+        color: {
+            [Op.or]: stringIterToLike(data.color)
+        }
     }
 
     if (!(data.minCoast === "" && data.maxCoast === "")) {
@@ -29,16 +52,9 @@ export const getProductsByOffset = async (req, res) => {
     // make sort on coast
     const productsData = await Product.findAndCountAll({
         where: {
-            subcategory: { [Op.like]: `%${data.subcategory}%`, },
-            category: { [Op.like]: `%${data.category}%`, },
-            tip: { [Op.like]: `%${data.tip}%`, },
-            color: { [Op.like]: `%${data.color}%`, },
-            coast: {
-                [Op.gte]: data.minCoast,
-                [Op.lte]: data.maxCoast
-            }
+            ...findOptions
         },
-        limit: 10,
+        limit: 20,
         // order: {}, пока отключаем, я хз как это работает
         offset: data.offset
     })
