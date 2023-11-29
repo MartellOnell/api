@@ -220,7 +220,8 @@ export const editUser = async (req, res) => {
                 id: newData.id,
                 permissions: "default"
             }
-        })[0]
+        })
+        user = user[0]
         user.username = newData.username
         user.password = newData.password
         user.email = newData.email
