@@ -6,7 +6,7 @@ export const getProductsByOffset = async (req, res) => {
     const data = req.body
 
     // make sort on coast
-    const {count: counts, rows: products} = Product.findAndCountAll({
+    const productsData = await Product.findAndCountAll({
         where: {
             subcategory: { [Op.like]: `%${data.subcategory}%`, },
             category: { [Op.like]: `%${data.category}%`, },
@@ -24,7 +24,7 @@ export const getProductsByOffset = async (req, res) => {
 
     return res.json({
         msg: "succesfully get data",
-        data: products,
-        counter: counts,
+        data: productsData.rows,
+        counter: productsData.count,
     })
 }
