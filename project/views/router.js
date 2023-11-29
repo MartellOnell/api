@@ -4,7 +4,7 @@ import {HavePermissions, TokenRequired} from "./decorators.js"
 import {
     createAdmin, createProduct, editAdmin, editProduct, editUser, getAllAdmins,
     getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
-    getUsersByUsernameOrEmail,
+    getUsersByUsernameOrEmail, getProductsByOffsetAdmin,
     uploadProductsAsFile,
 } from "./adminController.js"
 import {getProductsByOffset} from "./productControllers.js";
@@ -101,4 +101,10 @@ router.post("/api/admin/getAllAdmins", async (req, res, next) => {
     await HavePermissions(req, res, ["platform admin"], next)
 }, async (req, res) => {
     await getAllAdmins(req, res)
+})
+
+router.post("/api/admin/getProductsByOffset", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await getProductsByOffsetAdmin(req, res)
 })

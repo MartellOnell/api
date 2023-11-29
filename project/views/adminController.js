@@ -290,3 +290,18 @@ export const getAllAdmins = async (req, res) => {
         data: admins,
     })
 }
+
+export const getProductsByOffsetAdmin = async (req, res) => {
+    const data = req.body
+
+    const {count, rows} = Product.findAndCountAll({
+        limit: 10,
+        offset: data.offset
+    })
+
+    return res.json({
+        msg: "successfully get products",
+        data: rows,
+        counter: count
+    })
+}
