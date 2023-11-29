@@ -53,7 +53,8 @@ export const editAdmin = async (req, res) => {
                 id: newData.id,
                 permissions: "admin"
             }
-        })[0]
+        })
+        user = user[0]
         user.username = newData.username
         user.password = newData.password
         user.email = newData.email
