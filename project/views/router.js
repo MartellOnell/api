@@ -91,9 +91,7 @@ router.post("/api/admin/editProduct", async (req, res, next) => {
     await editProduct(req, res)
 })
 
-router.post("/api/products/getProductsByOffset", async (req, res, next) => {
-    await TokenRequired(req, res, next)
-}, async (req, res) => {
+router.post("/api/products/getProductsByOffset", async (req, res) => {
     await getProductsByOffset(req, res)
 })
 
