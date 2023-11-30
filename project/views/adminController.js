@@ -294,14 +294,20 @@ export const getAllAdmins = async (req, res) => {
 export const getProductsByOffsetAdmin = async (req, res) => {
     const data = req.body
 
-    const {count, rows} = Product.findAndCountAll({
+    const products = await Product.findAndCountAll({
+        where: {
+          [Op.or]: {
+              name: `%${data.arg}%`,
+              nomenclature: `%${data.arg}%`
+          }
+        },
         limit: 10,
         offset: data.offset
     })
 
     return res.json({
         msg: "successfully get products",
-        data: rows,
-        counter: count
+        data: products.rows,
+        counter: products.count
     })
 }
