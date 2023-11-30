@@ -297,8 +297,8 @@ export const getProductsByOffsetAdmin = async (req, res) => {
     const products = await Product.findAndCountAll({
         where: {
           [Op.or]: {
-              name: `%${data.arg}%`,
-              nomenclature: `%${data.arg}%`
+              name: {[Op.like]: `%${data.arg}%` },
+              nomenclature: {[Op.like]: `%${data.arg}%` }
           }
         },
         limit: 10,
@@ -309,5 +309,20 @@ export const getProductsByOffsetAdmin = async (req, res) => {
         msg: "successfully get products",
         data: products.rows,
         counter: products.count
+    })
+}
+
+export const getProductById = async (req, res) => {
+    const data = req.body
+
+    const product = await Product.findOne({
+        where: {
+            id: data.id
+        }
+    })
+
+    return res.json({
+        msg: 'successfully get product',
+        data: product
     })
 }

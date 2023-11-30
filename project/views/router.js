@@ -5,7 +5,7 @@ import {
     createAdmin, createProduct, editAdmin, editProduct, editUser, getAllAdmins,
     getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
     getUsersByUsernameOrEmail, getProductsByOffsetAdmin,
-    uploadProductsAsFile,
+    uploadProductsAsFile, getProductById,
 } from "./adminController.js"
 import {getProductsByOffset} from "./productControllers.js";
 
@@ -105,4 +105,10 @@ router.post("/api/admin/getProductsByOffset", async (req, res, next) => {
     await HavePermissions(req, res, ["admin", "platform admin"], next)
 }, async (req, res) => {
     await getProductsByOffsetAdmin(req, res)
+})
+
+router.post("/api/admin/getProductById", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await getProductById(req, res)
 })
