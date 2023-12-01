@@ -13,6 +13,10 @@ export const getProductsByOffset = async (req, res) => {
     const data = req.body
 
     let findOptions = {
+        [Op.or]: {
+            name: {[Op.like]: `%${data.name}%`},
+            nomenclature: {[Op.like]: `%${data.name}%`}
+        },
         subcategory: {
             [Op.or]: stringIterToLike(data.subcategory),
         },
