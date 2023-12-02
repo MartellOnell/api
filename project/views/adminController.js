@@ -165,8 +165,11 @@ export const createProduct = async (req, res) => {
     if (data.vendorCode) cleanData.vendorCode = data.vendorCode;
 
     Product.create(cleanData)
-        .then(res => {
-            return res.json({msg: "successfully created"})
+        .then(result => {
+            return res.json({
+                msg: "successfully created",
+                id: result.id,
+            })
         })
         .catch(err => {
             return res.status(500).json("oops, an error occured while creating Product")
