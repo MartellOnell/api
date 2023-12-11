@@ -5,9 +5,9 @@ import {
     createAdmin, createProduct, editAdmin, editProduct, editUser, getAllAdmins,
     getAllUsersByOffset, getCurrentAdminById, getCurrentUserById,
     getUsersByUsernameOrEmail, getProductsByOffsetAdmin,
-    uploadProductsAsFile, getProductById,
+    uploadProductsAsFile, getProductById, synchronizeFilterOptionsForProducts,
 } from "./adminController.js"
-import {getProductsByOffset} from "./productControllers.js";
+import {getOptions, getProductsByOffset} from "./productControllers.js";
 
 export const router = express.Router()
 
@@ -111,4 +111,14 @@ router.post("/api/admin/getProductById", async (req, res, next) => {
     await HavePermissions(req, res, ["admin", "platform admin"], next)
 }, async (req, res) => {
     await getProductById(req, res)
+})
+
+router.post("/api/products/getOptions", async (req, res) => {
+    await getOptions(req, res)
+})
+
+router.post("/api/admin/synchronizeFilterOptions", async (req, res, next) => {
+    await HavePermissions(req, res, ["admin", "platform admin"], next)
+}, async (req, res) => {
+    await synchronizeFilterOptionsForProducts(req, res)
 })

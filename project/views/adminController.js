@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { User, Product } from '../database/models.js'
+import {User, Product, FilterOptions} from '../database/models.js'
 import { readCsv } from '../csv_reader/csvRead.js';
 import * as fs from "fs"
 import * as url from 'url';
@@ -328,4 +328,45 @@ export const getProductById = async (req, res) => {
         msg: 'successfully get product',
         data: product
     })
+}
+
+export const synchronizeFilterOptionsForProducts = async (req, res) => {
+    const products = await Product.findAll()
+    let options = {
+        category: new Set(),
+        subcategory: new Set(),
+        tip: new Set(),
+        color: new Set(),
+        manufacturer: new Set()
+    }
+
+    for (let product in products) {
+        options.category.add(product.category)
+        options.subcategory.add(product.subcategory)
+        options.tip.add(product.tip)
+        options.color.add(product.color)
+        options.manufacturer.add(product.manufacturer)
+    }
+
+    options.category = Array.from(options.category)
+    options.subcategory = Array.from(options.subcategory)
+    options.tip = Array.from(options.tip)
+    options.color = Array.from(options.color)
+    options.manufacturer = Array.from(options.manufacturer)
+
+    const filterOptions = await FilterOptions.findAll()
+
+    if (filterOptions.length !== 0) {
+        const optionModel = filterOptions[0]
+        optionModel.category = options.category
+        optionModel.subcategory = options.subcategory
+        optionModel.tip = options.tip
+        optionModel.color = options.color
+        optionModel.manufacturer = options.manufacturer
+        await optionModel.save()
+    } else {
+        const optionModel = await FilterOptions.create(options)
+    }
+
+    return res.json({msg: "options were succ synchronized"})
 }

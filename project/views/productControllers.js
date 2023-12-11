@@ -1,4 +1,4 @@
-import { Product } from "../database/models.js"
+import {FilterOptions, Product} from "../database/models.js"
 import { Op } from "sequelize";
 
 const stringIterToLike = array => {
@@ -61,4 +61,13 @@ export const getProductsByOffset = async (req, res) => {
         data: productsData.rows,
         counter: productsData.count,
     })
+}
+
+export const getOptions = async (req, res) => {
+    const options = await FilterOptions.findAll()
+    if (options.length !== 0) {
+        return res.json({msg: "options were succ found", data: options[0]})
+    } else {
+        return res.status(404).json({msg: "options weren't found"})
+    }
 }

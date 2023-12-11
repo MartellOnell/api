@@ -75,3 +75,31 @@ export const Product = sequelize.define('Product', {
         allowNull: true
     }
 })
+
+export const FilterOptions = sequelize.define('FilterOptions', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    category: {
+        type: DataTypes.ARRAY,
+        allowNull: false,
+    },
+    subcategory: {
+        type: DataTypes.ARRAY,
+        allowNull: false,
+    },
+    tip: {
+        type: DataTypes.ARRAY,
+        allowNull: false,
+    },
+    color: {
+        type: DataTypes.ARRAY,
+        allowNull: false,
+    },
+    manufacturer: {
+        type: DataTypes.ARRAY,
+        allowNull: false,
+    }
+})
