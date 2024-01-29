@@ -12,11 +12,11 @@ let app = express()
 try {
     await sequelize.authenticate()
     await sequelize.sync()
-} catch(e) {
+} catch (e) {
     console.log(e)
 }
 
-app.use(busboy({immediate: true}))
+app.use(busboy({ immediate: true }))
 app.use(cors({
     origin: '*',
 }))

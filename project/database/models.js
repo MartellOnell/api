@@ -76,6 +76,7 @@ export const Product = sequelize.define('Product', {
     }
 })
 
+// all types in must be ARRAY in production (except for id)
 export const FilterOptions = sequelize.define('FilterOptions', {
     id: {
         type: DataTypes.INTEGER,
@@ -83,23 +84,23 @@ export const FilterOptions = sequelize.define('FilterOptions', {
         primaryKey: true,
     },
     category: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     subcategory: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     tip: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     color: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     manufacturer: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.STRING,
         allowNull: false,
     }
 })

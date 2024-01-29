@@ -330,6 +330,47 @@ export const getProductById = async (req, res) => {
     })
 }
 
+// old method
+// export const synchronizeFilterOptionsForProducts = async (req, res) => {
+//     const products = await Product.findAll()
+//     let options = {
+//         category: new Set(),
+//         subcategory: new Set(),
+//         tip: new Set(),
+//         color: new Set(),
+//         manufacturer: new Set()
+//     }
+
+//     for (let product in products) {
+//         options.category.add(product.category)
+//         options.subcategory.add(product.subcategory)
+//         options.tip.add(product.tip)
+//         options.color.add(product.color)
+//         options.manufacturer.add(product.manufacturer)
+//     }
+
+//     options.category = Array.from(options.category)
+//     options.subcategory = Array.from(options.subcategory)
+//     options.tip = Array.from(options.tip)
+//     options.color = Array.from(options.color)
+//     options.manufacturer = Array.from(options.manufacturer)
+
+//     const filterOptions = await FilterOptions.findAll()
+
+//     if (filterOptions.length !== 0) {
+//         const optionModel = filterOptions[0]
+//         optionModel.category = options.category
+//         optionModel.subcategory = options.subcategory
+//         optionModel.tip = options.tip
+//         optionModel.color = options.color
+//         optionModel.manufacturer = options.manufacturer
+//         await optionModel.save()
+//     } else {
+//         const optionModel = await FilterOptions.create(options)
+//     }
+
+//     return res.json({msg: "options were succ synchronized"})
+// }
 export const synchronizeFilterOptionsForProducts = async (req, res) => {
     const products = await Product.findAll()
     let options = {
@@ -339,7 +380,7 @@ export const synchronizeFilterOptionsForProducts = async (req, res) => {
         color: new Set(),
         manufacturer: new Set()
     }
-
+    
     for (let product in products) {
         options.category.add(product.category)
         options.subcategory.add(product.subcategory)
@@ -354,18 +395,26 @@ export const synchronizeFilterOptionsForProducts = async (req, res) => {
     options.color = Array.from(options.color)
     options.manufacturer = Array.from(options.manufacturer)
 
+    const optionsToString = {
+        category: options.category.join(';'),
+        subcategory: options.subcategory.join(';'),
+        tip: options.tip.join(';'),
+        color: options.color.join(';'),
+        manufacturer: options.manufacturer.join(';')
+    }
+
     const filterOptions = await FilterOptions.findAll()
 
     if (filterOptions.length !== 0) {
         const optionModel = filterOptions[0]
-        optionModel.category = options.category
-        optionModel.subcategory = options.subcategory
-        optionModel.tip = options.tip
-        optionModel.color = options.color
-        optionModel.manufacturer = options.manufacturer
+        optionModel.category = optionsToString.category
+        optionModel.subcategory = optionsToString.subcategory
+        optionModel.tip = optionsToString.tip
+        optionModel.color = optionsToString.color
+        optionModel.manufacturer = optionsToString.manufacturer
         await optionModel.save()
     } else {
-        const optionModel = await FilterOptions.create(options)
+        const optionModel = await FilterOptions.create(optionsToString)
     }
 
     return res.json({msg: "options were succ synchronized"})
